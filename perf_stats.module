@@ -28,7 +28,7 @@ function perf_stats_form_alter($form) {
 
 function perf_stats_shutdown() {
   global $devel_run_id;
-  global $perf_stats_count
+  global $perf_stats_count;
   global $queries;
   
   $tmpdir = sys_get_temp_dir();
