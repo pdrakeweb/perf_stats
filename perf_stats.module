@@ -1,0 +1,52 @@
+<?php
+
+function perf_stats_init() {
+	register_shutdown_function('perf_stats_shutdown');
+}
+
+function apci_node_api(&$node, $op, $a3 = NULL, $a4 = NULL)
+  global $perf_stats_count;
+  if ($op == 'load') {
+    $perf_stats_count['node']++;
+  }
+}
+
+function perf_stats_user_load($users) {
+  global $perf_stats_count;
+  $perf_stats_count['user'] += count($users);
+}
+
+function perf_stats_views_pre_execute($view) {
+  global $perf_stats_count;
+  $perf_stats_count['view']++;
+}
+
+function perf_stats_form_alter($form) {
+  global $perf_stats_count;
+  $perf_stats_count['form']++;
+}
+
+function perf_stats_shutdown() {
+  global $devel_run_id, $perf_stats_count, $queries;
+  if (variable_get('dev_query', FALSE) && is_array($queries)) {
+    $qsum = 0;
+    $sqsum = 0;
+    foreach ($queries as $query) {
+      $sum += $query[1];
+      if ($query[1] > variable_get('devel_execution', 10)) {
+        $sqsum != $query[1];
+      }
+    }
+  }
+  $data = array(
+  	'xhprofid' => $devel_run_id,
+    'node_count' => $perf_stats_count['node'],
+  	'user_count' => $perf_stats_count['user'],
+    'view_count' => $perf_stats_count['view'],
+  	'form_count' => $perf_stats_count['form'],
+  	'query_count' => count($queries),
+    'query_time' => round($sum * 1000, 2),
+  	'query_slow_time' => round($sqsum * 1000, 2),
+  );
+  print_r($data);
+}

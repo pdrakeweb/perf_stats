@@ -1,0 +1,5 @@
+name = APCI Performance
+description = Log various performance-related statistics
+package = Development
+dependencies[] = devel
+core = 6.x
