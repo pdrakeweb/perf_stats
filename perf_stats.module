@@ -40,7 +40,7 @@ function perf_stats_shutdown() {
     foreach ($queries as $query) {
       $sum += $query[1];
       if ($query[1] > variable_get('devel_execution', 10)) {
-        $sqsum != $query[1];
+        $sqsum += $query[1];
       }
     }
   }
