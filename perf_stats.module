@@ -4,7 +4,7 @@ function perf_stats_init() {
 	register_shutdown_function('perf_stats_shutdown');
 }
 
-function apci_node_api(&$node, $op, $a3 = NULL, $a4 = NULL)
+function apci_node_api(&$node, $op, $a3 = NULL, $a4 = NULL) {
   global $perf_stats_count;
   if ($op == 'load') {
     $perf_stats_count['node']++;
@@ -28,6 +28,10 @@ function perf_stats_form_alter($form) {
 
 function perf_stats_shutdown() {
   global $devel_run_id, $perf_stats_count, $queries;
+  
+  $tmpdir = sys_get_temp_dir();
+  unlink($tmpdir.'/perf-stats-output');
+  
   if (variable_get('dev_query', FALSE) && is_array($queries)) {
     $qsum = 0;
     $sqsum = 0;
@@ -38,6 +42,7 @@ function perf_stats_shutdown() {
       }
     }
   }
+  
   $data = array(
   	'xhprofid' => $devel_run_id,
     'node_count' => $perf_stats_count['node'],
@@ -48,5 +53,6 @@ function perf_stats_shutdown() {
     'query_time' => round($sum * 1000, 2),
   	'query_slow_time' => round($sqsum * 1000, 2),
   );
-  print_r($data);
+  
+  file_put_contents($tmpdir.'/perf-stats-output', serialize($data));
 }

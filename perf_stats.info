@@ -1,4 +1,4 @@
-name = APCI Performance
+name = Performance Statistics
 description = Log various performance-related statistics
 package = Development
 dependencies[] = devel
