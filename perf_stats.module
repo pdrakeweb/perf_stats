@@ -30,7 +30,7 @@ function perf_stats_shutdown() {
   global $devel_run_id, $perf_stats_count, $queries;
   
   $tmpdir = sys_get_temp_dir();
-  unlink($tmpdir.'/perf-stats-output');
+  @unlink($tmpdir.'/perf-stats-output');
   
   if (variable_get('dev_query', FALSE) && is_array($queries)) {
     $qsum = 0;
