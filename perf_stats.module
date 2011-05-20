@@ -39,7 +39,7 @@ function perf_stats_shutdown() {
     $sqsum = 0;
     foreach ($queries as $query) {
       $qsum += $query[1];
-      if ($query[1] > variable_get('devel_execution', 10)) {
+      if ($query[1] >= variable_get('devel_execution', 10)) {
         $sqsum += $query[1];
       }
     }
@@ -52,8 +52,8 @@ function perf_stats_shutdown() {
     'view_count' => $perf_stats_count['view'],
   	'form_count' => $perf_stats_count['form'],
   	'query_count' => count($queries),
-    'query_time' => round($qsum * 1000, 2),
-  	'query_slow_time' => round($sqsum * 1000, 2),
+    'query_time' => round($qsum * 1000),
+  	'query_slow_time' => round($sqsum * 1000),
   );
   
   file_put_contents($tmpdir.'/perf-stats-output', serialize($data));
