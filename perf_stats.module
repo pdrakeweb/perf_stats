@@ -65,6 +65,7 @@ function perf_stats_exit() {
 
   $qsum = 0;
   $sqsum = 0;
+  $sqcnt = 0;
   
   $tmpdir = sys_get_temp_dir();
   //@unlink($tmpdir.'/perf-stats-output');
@@ -74,6 +75,7 @@ function perf_stats_exit() {
       $qsum += $query[1];
       if ($query[1] >= variable_get('devel_execution', 10)) {
         $sqsum += $query[1];
+        $sqcnt++;
       }
     }
   }
@@ -89,6 +91,7 @@ function perf_stats_exit() {
   	'query_count' => count($queries),
     'query_time' => round($qsum * 1000),
   	'query_slow_time' => round($sqsum * 1000),
+  	'query_slow_count' => round($sqsum * 1000),
   );
   
   file_put_contents($tmpdir.'/perf-stats-output', serialize($data));
