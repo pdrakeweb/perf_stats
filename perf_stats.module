@@ -84,6 +84,11 @@ function perf_stats_exit() {
   
   $data = array(
   	'xhprofid' => $devel_run_id,
+    'wall_time' => 0,
+    'cpu_time' => 0,
+    'memory' => 0,
+    'peak_memory' => 0,
+  	'func_call_count' => 0,
     'node_count' => $perf_stats_count['node'],
   	'user_count' => $perf_stats_count['user'],
     'view_count' => $perf_stats_count['view'],
