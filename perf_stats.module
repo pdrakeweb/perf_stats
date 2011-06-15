@@ -64,7 +64,6 @@ function perf_stats_exit() {
   global $queries;
 
   $qsum = 0;
-  $sqsum = 0;
   $sqcnt = 0;
   
   $tmpdir = sys_get_temp_dir();
@@ -74,29 +73,40 @@ function perf_stats_exit() {
     foreach ($queries as $query) {
       $qsum += $query[1];
       if ($query[1] >= variable_get('devel_execution', 10)) {
-        $sqsum += $query[1];
         $sqcnt++;
       }
     }
   }
   
-  $devel_run_id = variable_get('devel_xhprof_enabled', FALSE) ? devel_shutdown_xhprof(): NULL;
+  if (variable_get('devel_xhprof_enabled', FALSE)) {
+    $namespace = variable_get('site_name', '');  // namespace for your application
+    $xhprof_data = xhprof_disable();
+    $xhprof_runs = new XHProfRuns_Default();
+    $devel_run_id = $xhprof_runs->save_run($xhprof_data, $namespace);
+    xhprof_compute_flat_info($xhprof_data, $totals);
+    $mem = $totals['mu'];
+    $pmem = $totals['pmu'];
+    $wt = $totals['wt'];
+    $cpu = $totals['cpu'];
+    $ct = $totals['ct'];
+  } else {
+    $mem = $pmem = $wt = $cpu = $ct = $devel_run_id = 0;
+  }
   
   $data = array(
   	'xhprofid' => $devel_run_id,
-    'wall_time' => 0,
-    'cpu_time' => 0,
-    'memory' => 0,
-    'peak_memory' => 0,
-  	'func_call_count' => 0,
+    'wall_time' => $wt,
+    'cpu_time' => $cpu,
+    'memory' => $mem,
+    'peak_memory' => $pmem,
+  	'func_call_count' => $ct,
     'node_count' => $perf_stats_count['node'],
   	'user_count' => $perf_stats_count['user'],
     'view_count' => $perf_stats_count['view'],
   	'form_count' => $perf_stats_count['form'],
   	'query_count' => count($queries),
     'query_time' => round($qsum * 1000),
-  	'query_slow_time' => round($sqsum * 1000),
-  	'query_slow_count' => round($sqsum * 1000),
+  	'query_slow_count' => $sqcnt,
   );
   
   file_put_contents($tmpdir.'/perf-stats-output', serialize($data));
