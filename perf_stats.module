@@ -94,7 +94,8 @@ function perf_stats_exit() {
   }
   
   $data = array(
-  	'xhprofid' => $devel_run_id,
+  	'xhprof_id' => $devel_run_id,
+    'server_name' => $namespace,
     'wall_time' => $wt,
     'cpu_time' => $cpu,
     'memory' => $mem,
